@@ -1,0 +1,22 @@
+{
+  "name": "minicicd",
+  "version": "1.0.0",
+  "description": "微型CICD后端服务",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@hapi/boom": "^9.1.4",
+    "@koa/cors": "^3.3.0",
+    "fastest-validator": "^1.12.0",
+    "koa": "^2.13.4",
+    "koa-bodyparser": "^4.3.0",
+    "koa-router": "^10.1.1",
+    "koa-static": "^5.0.0",
+    "sequelize": "^6.19.0",
+    "sqlite3": "^5.0.5"
+  }
+}

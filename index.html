@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="//unpkg.com/vue@next"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+  <div id="app" style="margin:0 20px;">
+    <button @click="handleTest">测试按钮</button>
+    <div>
+      <p>部署日志:</p>
+      <div class="text-log-wrap">
+        <pre>{{ deployLog }}</pre>
+      </div>
+    </div>
+  </div>
+  <script>
+    const app = {
+      data() {
+        return {
+          deployLog: '点击按钮进行部署',
+        }
+      },
+      methods: {
+        handleTest() {
+          this.userMethod()
+        },
+        userMethod() {
+          axios.post('/v1/api/getProjectInfo', {
+            // id: 2,
+            // name: 'proj2',
+            // gitRepository: 'https://github.com/repo1',
+            // desc: '44444',
+            // people: 'yu,wang',
+            status: 'UNUSE'
+          })
+            .then((res) => {
+              // 部署完成，返回 log
+              console.log(res.data);
+              this.deployLog = res.data.msg
+            })
+            .catch(function (err) {
+              console.log(err);
+            })
+        },
+        deploy() {
+          this.deployLog = '后端部署中，请稍等...'
+          axios.post('/deploy')
+            .then((res) => {
+              // 部署完成，返回 log
+              console.log(res.data);
+              this.deployLog = res.data.msg
+            })
+            .catch(function (err) {
+              console.log(err);
+            })
+        }
+      }
+    }
+
+    Vue.createApp(app).mount('#app')
+  </script>
+</body>
+</html>
