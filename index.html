@@ -11,11 +11,8 @@
 <body>
   <div id="app" style="margin:0 20px;">
     <button @click="handleTest">测试按钮</button>
-    <div>
-      <p>部署日志:</p>
-      <div class="text-log-wrap">
-        <pre>{{ deployLog }}</pre>
-      </div>
+    <div class="text-log-wrap">
+      <pre>{{deployLog}}</pre>
     </div>
   </div>
   <script>
@@ -23,33 +20,26 @@
       data() {
         return {
           deployLog: '点击按钮进行部署',
+          msgList: [],
+          socket: ''
         }
+      },
+      mounted() {
       },
       methods: {
         handleTest() {
           this.userMethod()
+          // this.handleDeploy()
         },
         userMethod() {
-          axios.post('/v1/api/getProjectInfo', {
+          axios.post('/v1/api/deploy', {
             // id: 2,
             // name: 'proj2',
             // gitRepository: 'https://github.com/repo1',
             // desc: '44444',
             // people: 'yu,wang',
-            status: 'UNUSE'
+            // status: 'UNUSE'
           })
-            .then((res) => {
-              // 部署完成，返回 log
-              console.log(res.data);
-              this.deployLog = res.data.msg
-            })
-            .catch(function (err) {
-              console.log(err);
-            })
-        },
-        deploy() {
-          this.deployLog = '后端部署中，请稍等...'
-          axios.post('/deploy')
             .then((res) => {
               // 部署完成，返回 log
               console.log(res.data);

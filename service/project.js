@@ -2,7 +2,12 @@ const db = require('../model/index.js')
 const { Op } = require("sequelize");
 module.exports = {
   create: payload => db.Project.create(payload),
-  find: payload => {
+  find: payload => db.Project.findOne({
+    where: {
+      id: payload.id
+    }
+  }),
+  findAll: payload => {
     const arr = []
     payload.id && arr.push({ id: payload.id })
     payload.name && arr.push({ name: payload.name })
@@ -13,7 +18,6 @@ module.exports = {
       }
     })
   },
-  findAll: () => db.Project.findAll({}),
   delete: payload => db.Project.destroy({
     where: {
       id: payload.id

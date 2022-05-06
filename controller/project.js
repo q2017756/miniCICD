@@ -28,13 +28,32 @@ module.exports = {
       success: true
     }
   },
+  /**
+   * 获取列表，可根据id、name、staus查询
+   * @param {*} ctx 
+   * @returns 
+   */
   getList: async ctx => {
     console.log('getList')
     const { request: { body }, response } = ctx
-    const entityList = await services.findAll()
+    const schema = {
+      id: { type: 'number', optional: true },
+      name: { type: 'string', optional: true },
+      status: { type: 'string', optional: true },
+    }
+    const errors = v.validate(body, schema)
+    if (Array.isArray(errors) && errors.length) {
+      ctx.response.status = 500
+      return response.body = {
+        errorMsg: Boom.badRequest(null, errors),
+        result: '参数错误',
+        success: false
+      }
+    }
+    const entity = await services.findAll(body)
     response.body = {
       message: '查找成功',
-      result: entityList,
+      result: entity,
       success: true
     }
   },
@@ -42,9 +61,7 @@ module.exports = {
     console.log('getInfo')
     const { request: { body }, response } = ctx
     const schema = {
-      id: { type: 'number', optional: true },
-      name: { type: 'string', optional: true },
-      status: { type: 'string', optional: true },
+      id: { type: 'number' },
     }
     const errors = v.validate(body, schema)
     if (Array.isArray(errors) && errors.length) {
@@ -62,6 +79,11 @@ module.exports = {
       success: true
     }
   },
+  /**
+   * 删除非物理删除，只是修改状态
+   * @param {*} ctx 
+   * @returns 
+   */
   delete: async ctx => {
     console.log('delete')
     const { request: { body }, response } = ctx
@@ -77,7 +99,11 @@ module.exports = {
         success: false
       }
     }
-    await services.delete(body)
+    const entity = await services.find(body)
+    await services.update({
+      ...entity.dataValues,
+      status: 'UNUSE'
+    })
     response.body = {
       message: '删除成功',
       result: '',

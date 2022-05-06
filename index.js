@@ -11,12 +11,8 @@ const applyRoutes = require('./router');
 const app = new Koa();
 const router = new KoaRouter();
 
-const port = 9300
+const port = 9200
 
-console.log(1)  
-
-console.log(2)  
-console.log(3)  
 applyRoutes(router)
 app.use(new KoaStatic(path.resolve(__dirname, "./")));
 app.use(cors());

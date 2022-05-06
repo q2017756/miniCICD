@@ -1,7 +1,7 @@
 const db = require('../model/index.js')
 module.exports = {
   create: payload => db.User.create(payload),
-  find: payload => db.User.findAll({
+  find: payload => db.User.findOne({
     attributes: { exclude: ['password'] },
     where: {
       id: payload.id

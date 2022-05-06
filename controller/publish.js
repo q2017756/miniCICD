@@ -1,10 +1,25 @@
 const services = require('../service/publish.js')
 const projectServices = require('../service/project.js')
+const runCmd = require('../shelljs/test.js')
 const Validator = require('fastest-validator')
 const Boom = require('@hapi/boom');
 const v = new Validator()
 
 module.exports = {
+  deploy: async ctx => {
+    try {
+      let res =  await runCmd();
+      ctx.body = {
+        code: 0,
+        msg: res,
+      };
+    } catch (e) {
+      ctx.body = {
+        code: -1,
+        msg: e.message,
+      };
+    }
+  },
   create: async ctx => {
     const { request: { body }, response } = ctx
     const schema = {
