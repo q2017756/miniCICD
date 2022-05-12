@@ -16,7 +16,9 @@
     "koa-bodyparser": "^4.3.0",
     "koa-router": "^10.1.1",
     "koa-static": "^5.0.0",
+    "log4js": "^6.4.6",
     "sequelize": "^6.19.0",
+    "socket.io": "^4.5.0",
     "sqlite3": "^5.0.5"
   }
 }

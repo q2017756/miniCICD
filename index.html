@@ -6,13 +6,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <script src="//unpkg.com/vue@next"></script>
+  <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
 <body>
   <div id="app" style="margin:0 20px;">
     <button @click="handleTest">测试按钮</button>
+    <button @click="handleDeploy">部署</button>
     <div class="text-log-wrap">
-      <pre>{{deployLog}}</pre>
+      <pre v-if="msgList.length" class="text-log">
+        <p v-for="(text, index) in msgList" :key="text+index">{{text}}</p>
+      </pre>
+      <div v-else>请点击部署</div>
     </div>
   </div>
   <script>
@@ -21,18 +26,70 @@
         return {
           deployLog: '点击按钮进行部署',
           msgList: [],
-          socket: ''
+          socket: '',
+          resList: []
         }
       },
       mounted() {
+        this.socket = io()
+        this.socket.on('deploy-log', (msg) => {
+          console.log(msg)
+          this.msgList.push(msg)
+        })
       },
       methods: {
         handleTest() {
-          this.userMethod()
+          // this.userMethod()
           // this.handleDeploy()
+          for (var i = 0; i< 40;i++) {
+            this.test()
+          }
+        },
+        test() {
+          axios.post('https://mapi.bestpay.com.cn/gapi/o2o/qdlPay/app/createContractNo', {
+            agreeId: '20220117030100222506456392400991',
+            "company":"mb","requestChannel":"MERCHANT_PC","requestSystem":"H5","requestUser":"H5","traceLogId":"iofiodasiogfasidogisogdisadogd"
+            // id: 2,
+            // name: 'proj2',
+            // gitRepository: 'https://github.com/repo1',
+            // desc: '44444',
+            // people: 'yu,wang',
+            // status: 'UNUSE'
+          })
+            .then((res) => {
+              // 部署完成，返回 log
+              this.resList.push(res.data.result)
+              console.log(this.resList)
+            })
+            .catch(function (err) {
+              console.log(err);
+            })
         },
         userMethod() {
+          axios.post('/v1/api/getUserList', {
+            projectId: 2,
+            operator: 'yushibo'
+            // id: 2,
+            // name: 'proj2',
+            // gitRepository: 'https://github.com/repo1',
+            // desc: '44444',
+            // people: 'yu,wang',
+            // status: 'UNUSE'
+          })
+            .then((res) => {
+              // 部署完成，返回 log
+              console.log(res.data);
+            })
+            .catch(function (err) {
+              console.log(err);
+            })
+        },
+        handleDeploy() {
+          this.deployLog = '部署中。。。'
+          this.msgList = []
           axios.post('/v1/api/deploy', {
+            projectId: 2,
+            operator: 'yushibo'
             // id: 2,
             // name: 'proj2',
             // gitRepository: 'https://github.com/repo1',

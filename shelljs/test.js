@@ -1,3 +1,4 @@
+const socketIo = require('../index.js')
 const runCmd = () => {
   return new Promise((resolve, reject) => {
     const { spawn } = require('child_process');
@@ -5,11 +6,16 @@ const runCmd = () => {
     const child = spawn('sh', ['shelljs/deploy.sh']); // 执行 sh deploy.sh 命令
 
     let msg = ''
-    console.log(2)
+    console.log(2, socketIo)
     child.stdout.on('data', (data) => {
-      console.log(3)
+      console.log(3, socketIo)
       // shell 执行的 log 在这里搜集，可以通过接口返回给前端
       console.log(`stdout: ${data}`);
+      socketIo.on("connection", (socket) => {
+        console.log(122333)
+        console.log("a user connected");
+      });
+      socketIo.emit('deploy-log', `${data}`) 
       // 普通接口仅能返回一次，需要把 log 都搜集到一次，在 end 时 返回给前端
       msg += `${data}`
     });
@@ -21,6 +27,7 @@ const runCmd = () => {
     child.stderr.on('data', (data) => {
       // 如果发生错误，错误从这里输出
       console.error(`stderr: ${data}`);
+      socketIo.emit('deploy-log', `${data}`) 
       msg += `${data}`
     });
 
