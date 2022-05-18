@@ -7,6 +7,7 @@ module.exports = {
     }
   }),
   findAll: () => db.Publish.findAll({
+    order: [[ 'createdAt', 'DESC' ]],
   }),
   delete: payload => db.Publish.destroy({
     where: {

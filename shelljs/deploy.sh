@@ -1,80 +1,106 @@
 # !bin/bash
 set -e
-# echo '【执行 pwd】'
-# pwd
-# echo '【执行 git branch】'
-# git branch
-# echo '【执行 git pull】'
-# git pull
-# echo '【执行 ls -lh】'
-# ls -lh
+# V0.2 传入指定参数
 
-# v0.2 传入指定参数
-# 0. 获取参数：所需node版本、开发git路径、
-# 1. 获取变量：当前node版本、
-# 2. 去外层路径查找文件夹路径是否存在 ./sourceCode/dev(test/pre/prod)
-# 3. 根据入参传入的projectId 
+# 0. 获取参数：所需node版本、开发git路径、项目名称、git文件夹名称、打包git地址、打包文件夹名称
+echo "【### 开始执行 $0，获取参数：】"
+echo "参数1. node版本 = $1"
+NODE_VERSION=$1
+echo "参数2. 开发git路径 = $2"
+DEV_GIT_SOURCE=$2
+name_git=${DEV_GIT_SOURCE##*/}
+DEV_GIT_NAME=${name_git%.*}
+echo "DEV_GIT_NAME: $DEV_GIT_NAME"
+echo "参数3. 打包分支test/test_tmp = $3"
+DEV_BRANCH_NAME=$3
+echo "参数4. 项目名称（dev里packages的文件夹名称） = $4"
+DEV_PROJECT_NAME=$4
+echo "参数5. 打包环境 = $5"
+ENV_NAME=$5
+echo "参数6. 目标git路径 = $6"
+TARGET_GIT_SOURCE=$6
+target_name_git=${TARGET_GIT_SOURCE##*/}
+TARGET_GIT_NAME=${target_name_git%.*}
+echo "TARGET_GIT_NAME: $TARGET_GIT_NAME"
+echo "参数7. 目标git文件夹名称 = $7"
+TARGET_PROJECT_NAME=$7
 
-# v0.1，拿campus测试
+# 1. 根据项目所需node版本进行node版本切换 v16.13.0/v11.11.0
+
+# 2. 创建各个文件夹:dev、test、pre、prod
 CURRENT_DIR=$(pwd)
-echo "【1. 判断文件夹是否存在，不存在则创建】"
-SOURCECODE_DIR=${CURRENT_DIR}/sourceCode
-SOURCECODE_DEV_DIR=${SOURCECODE_DIR}/dev
-SOURCECODE_TEST_DIR=${SOURCECODE_DIR}/test
-SOURCECODE_PRE_DIR=${SOURCECODE_DIR}/pre
-SOURCECODE_PROD_DIR=${SOURCECODE_DIR}/prod
+echo "【### 判断文件夹是否存在，不存在则创建】"
+SOURCECODE_DIR=$CURRENT_DIR/sourceCode
+SOURCECODE_DEV_DIR=$SOURCECODE_DIR/dev
+SOURCECODE_TEST_DIR=$SOURCECODE_DIR/test
+SOURCECODE_PRE_DIR=$SOURCECODE_DIR/pre
+SOURCECODE_PROD_DIR=$SOURCECODE_DIR/prod
 
-mkdir -p ${SOURCECODE_DEV_DIR}
-mkdir -p ${SOURCECODE_TEST_DIR}
-mkdir -p ${SOURCECODE_PRE_DIR}
-mkdir -p ${SOURCECODE_PROD_DIR}
-
-echo '【2. 开发】'
-echo '【2.1 下载开发源码】'
-cd ${SOURCECODE_DEV_DIR}
-GIT_DIR_NAME=${SOURCECODE_DEV_DIR}/o2o-fund-service-h5
-if [ ! -d "${GIT_DIR_NAME}" ]; then
-  git clone git@gitlab.bestpay.com.cn:o2o/o2o-fund-service-h5.git
+mkdir -p $SOURCECODE_DEV_DIR
+mkdir -p $SOURCECODE_TEST_DIR
+mkdir -p $SOURCECODE_PRE_DIR
+mkdir -p $SOURCECODE_PROD_DIR
+# 3. 进入dev文件夹下载开发源码并打包
+echo '【### dev文件夹】'
+echo '【#### 下载开发源码】'
+cd $SOURCECODE_DEV_DIR
+GIT_DIR_NAME=$SOURCECODE_DEV_DIR/$DEV_GIT_NAME
+if [ ! -d "$GIT_DIR_NAME" ]; then
+  git clone $DEV_GIT_SOURCE
 fi
-echo "【2.2 切换到test分支】"
-cd ${GIT_DIR_NAME}
-git checkout test
-echo "【2.3 拉取最新的代码】"
-git pull origin test
-
-echo "【2.4 安装依赖，打包dist】"
-cd ${GIT_DIR_NAME}/packages/campus
+echo "【#### 切换到test/test_tmp分支】"
+cd $GIT_DIR_NAME
+git checkout $DEV_BRANCH_NAME
+echo "【#### 拉取最新的代码】"
+git pull origin $DEV_BRANCH_NAME
+echo "【### 安装依赖，打包dist】"
+cd $GIT_DIR_NAME/packages/$DEV_PROJECT_NAME
 pnpm i -s
-pnpm run build:test
-echo "【3. test】"
-echo "【3.1 下载test代码】"
-cd ${SOURCECODE_TEST_DIR}
-GIT_TEST_DIR_NAME=${SOURCECODE_TEST_DIR}/campus
-if [ ! -d "${GIT_TEST_DIR_NAME}" ]; then
-  git clone git@gitlab.bestpay.com.cn:mbp/campus.git
-fi
-echo "【3.2 切换到test分支】"
-cd ${GIT_TEST_DIR_NAME}
-git checkout test
-echo "【3.3 拉取最新的代码】"
-git pull origin test
-echo "【3.4 创建新的文件夹，备份旧的文件夹】"
-mv ${GIT_TEST_DIR_NAME}/campus ${GIT_TEST_DIR_NAME}/campus-bak
-mkdir ${GIT_TEST_DIR_NAME}/campus
-echo "【3.5 将开发分支打包后的dist复制到新创建的文件夹】"
-cp -a ${GIT_DIR_NAME}/packages/campus/dist/. ${GIT_TEST_DIR_NAME}/campus
-rm -rf ${GIT_TEST_DIR_NAME}/campus-bak
+pnpm run build:$ENV_NAME
 
-echo "【3.6 判断打包后是否有改动】"
+# 3. 进入目标环境文件夹下载开发源码并替换文件
+echo "【### 目标环境文件夹】"
+echo "【#### 下载对应git代码】"
+cd $SOURCECODE_DIR/$ENV_NAME
+GIT_TEST_DIR_NAME=$SOURCECODE_DIR/$ENV_NAME/$TARGET_GIT_NAME
+if [ ! -d "$GIT_TEST_DIR_NAME" ]; then
+  git clone $TARGET_GIT_SOURCE
+fi
+echo "【#### 切换到具体环境分支】"
+cd $GIT_TEST_DIR_NAME
+git checkout $ENV_NAME
+echo "【#### 拉取最新的代码】"
+git pull origin $ENV_NAME
+echo "【#### 创建新的文件夹，备份旧的文件夹】"
+mv $GIT_TEST_DIR_NAME/$TARGET_PROJECT_NAME $GIT_TEST_DIR_NAME/$TARGET_PROJECT_NAME-bak
+mkdir $GIT_TEST_DIR_NAME/$TARGET_PROJECT_NAME
+echo "【#### 将开发分支打包后的dist复制到新创建的文件夹】"
+cp -a $GIT_DIR_NAME/packages/$DEV_PROJECT_NAME/dist/. $GIT_TEST_DIR_NAME/$TARGET_PROJECT_NAME
+rm -rf $GIT_TEST_DIR_NAME/$TARGET_PROJECT_NAME-bak
+echo "【#### 判断打包后是否有改动】"
 STAGE_FILES=$(git diff --name-only)
-echo "【STAGE_FILES：${STAGE_FILES}】"
 if test ${#STAGE_FILES} -gt 0
 then
+  for FILE in $STAGE_FILES
+  do
+    echo "改动文件名称：$FILE"
+  done
   git add .
-  git commit -m "fix:(campus)(test) 测试test"
+  git commit -m "fix:($DEV_PROJECT_NAME)($ENV_NAME) 项目自动打包"
   git push origin test
+  echo '【代码推送成功，结束】'
 else
-  echo '没有文件改动'
+  echo '【没有文件改动，结束】'
 fi
-echo "【？. 查看构成】"
-ls -la
+# pnpm i -g anywhere
+
+# exit 0
+# echo "【4. 启动http服务验证】"
+# function rand(){ 
+#  min=$1 
+#  max=$(($2-$min+1)) 
+#  num=$(($RANDOM+1000000000)) #增加一个10位的数再求余 
+#  echo $(($num%$max+$min)) 
+# }  
+# rnd=$(rand 11000 20000) 
+# anywhere $rnd 

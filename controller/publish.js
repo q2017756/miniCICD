@@ -5,19 +5,39 @@ const Boom = require('@hapi/boom');
 const v = new Validator()
 
 module.exports = {
-  deploy: async (ctx, execFunc) => {
-  
-    try {
-      let res = await execFunc();
-      ctx.body = {
-        code: 0,
-        msg: res,
-      };
-    } catch (e) {
-      ctx.body = {
-        code: -1,
-        msg: e.message,
-      };
+  deploy: async (body, response) => {
+    const schema = {
+      projectId: { type: 'number' },
+      branchName: { max: 10, min: 1, type: 'string' },
+      envType: { max: 10, min: 1, type: 'string' },
+      operator: { max: 255, min: 4, type: 'string' }
+    }
+    const errors = v.validate(body, schema)
+    console.log(1, errors)
+
+    if (Array.isArray(errors) && errors.length) {
+      return {
+        projectName: '',
+        errorMsg: '参数错误'
+      }
+    }
+    const projectEntity = await projectServices.find({
+      id: body.projectId
+    })
+    if (!projectEntity) {
+      return {
+        projectName: '',
+        errorMsg: '项目不存在'
+      }
+    }
+    const projectValue = projectEntity.dataValues
+    return {
+      projectName: projectValue.name,
+      branchName: body.branchName,
+      nodeEnv: projectValue.nodeEnv,
+      envType: body.envType,
+      gitRepository: projectValue.gitRepository,
+      gitProjectName: projectValue.gitProjectName,
     }
   },
   create: async ctx => {
@@ -49,7 +69,7 @@ module.exports = {
         success: false
       }
     }
-    await services.create(body)
+    const publishEntity = await services.create(body)
     response.body = {
       message: '新增成功',
       result: '新增成功',

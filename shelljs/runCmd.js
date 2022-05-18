@@ -17,7 +17,10 @@ function runCmd(cmd, args, callback, socketIo) {
     // 除了 socket 怎么将 log 数据一点点通过接口传给前端
   });
   child.stdout.on("end", function () {
-    callback(resp);
+    console.log(5555555)
+    callback({
+      logs: resp
+    });
   });
 
   // shell 脚本执行错误信息也返回
@@ -30,7 +33,11 @@ function runCmd(cmd, args, callback, socketIo) {
     socketIo && socketIo.emit("deploy-log", info);
   });
   child.stderr.on("end", function () {
-    callback(resp);
+    console.log(66666)
+    callback({
+      logs: resp,
+      error: true
+    });
   });
 }
 

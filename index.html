@@ -5,9 +5,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
-  <script src="//unpkg.com/vue@next"></script>
+  <!-- <script src="//unpkg.com/vue@next"></script> -->
+  <!-- <script src="https://cdn.bootcss.com/vue/2.6.11/vue.js"></script> -->
+  <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.2.33/vue.global.js"></script>
   <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <!-- <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
+  <script src="https://cdn.bootcss.com/axios/0.23.0/axios.min.js"></script>
 </head>
 <body>
   <div id="app" style="margin:0 20px;">
@@ -31,19 +34,17 @@
         }
       },
       mounted() {
-        this.socket = io()
-        this.socket.on('deploy-log', (msg) => {
-          console.log(msg)
-          this.msgList.push(msg)
-        })
+        // this.socket = io()
+        // this.socket.on('deploy-log', (msg) => {
+        //   console.log(222, msg)
+        //   this.msgList.push(msg)
+        // })
       },
       methods: {
         handleTest() {
+          // this.socket.emit('deploy-log', '111')
           // this.userMethod()
           // this.handleDeploy()
-          for (var i = 0; i< 40;i++) {
-            this.test()
-          }
         },
         test() {
           axios.post('https://mapi.bestpay.com.cn/gapi/o2o/qdlPay/app/createContractNo', {
@@ -66,8 +67,7 @@
             })
         },
         userMethod() {
-          axios.post('/v1/api/getUserList', {
-            projectId: 2,
+          axios.post('/v1/api/getUserInfo', {
             operator: 'yushibo'
             // id: 2,
             // name: 'proj2',
@@ -89,6 +89,8 @@
           this.msgList = []
           axios.post('/v1/api/deploy', {
             projectId: 2,
+            branchName: 'test',
+            envType: 'test',
             operator: 'yushibo'
             // id: 2,
             // name: 'proj2',

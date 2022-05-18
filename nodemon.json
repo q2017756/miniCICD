@@ -1,0 +1,9 @@
+{
+  "watch": [],
+  "ignore": ["./sourceCode"],
+  "script": "index.js",
+  "options": {
+    "extensions": [],
+    "exec": "node"
+  }
+}

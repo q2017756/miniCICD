@@ -4,11 +4,18 @@ const Boom = require('@hapi/boom');
 const v = new Validator()
 
 module.exports = {
+  /**
+   * 新增，必传除了status以外字段
+   * @param {*} ctx 
+   * @returns 
+   */
   create: async ctx => {
     const { request: { body }, response } = ctx
     const schema = {
       name: { max: 60, min: 1, type: 'string' },
+      nodeEnv: { max: 10, min: 1, type: 'string' },
       gitRepository: { max: 255, min: 5, type: 'string' },
+      gitProjectName: { max: 255, min: 5, type: 'string' },
       desc: { max: 255, min: 5, type: 'string' },
       people: { max: 255, min: 5, type: 'string' }
     }
@@ -116,9 +123,11 @@ module.exports = {
     const schema = {
       id: { type: 'number' },
       name: { max: 60, min: 1, type: 'string' },
+      nodeEnv: { max: 10, min: 1, type: 'string' },
       gitRepository: { max: 255, min: 5, type: 'string' },
+      gitProjectName: { max: 255, min: 5, type: 'string' },
       desc: { max: 255, min: 5, type: 'string' },
-      people: { max: 255, min: 5, type: 'string' },
+      people: { max: 255, min: 5, type: 'string' }
     }
     const errors = v.validate(body, schema)
     if (Array.isArray(errors) && errors.length) {
