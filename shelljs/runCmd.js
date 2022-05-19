@@ -13,14 +13,12 @@ function runCmd(cmd, args, callback, socketIo) {
     resp += info;
     logger.info(info);
     socketIo && socketIo.emit("deploy-log", info);
-    // log 较多时，怎么实时将消息通过接口返给前端，只能是 socket ？
-    // 除了 socket 怎么将 log 数据一点点通过接口传给前端
   });
   child.stdout.on("end", function () {
     console.log(5555555)
-    callback({
-      logs: resp
-    });
+    // callback({
+    //   logs: resp
+    // });
   });
 
   // shell 脚本执行错误信息也返回
@@ -34,9 +32,17 @@ function runCmd(cmd, args, callback, socketIo) {
   });
   child.stderr.on("end", function () {
     console.log(66666)
+    // callback({
+    //   logs: resp,
+    //   error: true
+    // });
+  });
+  child.on('exit', function(code) {
+    console.log('Oh noez, teh errurz: ' + code);
+    console.log('Oh noez, teh errurz: ' + typeof code);
     callback({
       logs: resp,
-      error: true
+      error: code === 1
     });
   });
 }

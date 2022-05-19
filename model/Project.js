@@ -22,6 +22,16 @@ const Project = sequelize.define('project', {
   gitProjectName: {
     type: DataTypes.STRING,
   },
+  // 打包产物html名称
+  buildHtml: {
+    type: DataTypes.STRING,
+    defaultValue: 'index.html'
+  },
+  // 打包产物文件夹名称，多文件夹逗号分割：static/js、css、img、fonts/
+  buildFolder: {
+    type: DataTypes.STRING,
+    defaultValue: 'static'
+  },
   // 描述
   desc: {
     type: DataTypes.STRING,

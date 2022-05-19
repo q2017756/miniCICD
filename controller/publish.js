@@ -13,8 +13,6 @@ module.exports = {
       operator: { max: 255, min: 4, type: 'string' }
     }
     const errors = v.validate(body, schema)
-    console.log(1, errors)
-
     if (Array.isArray(errors) && errors.length) {
       return {
         projectName: '',
@@ -38,16 +36,17 @@ module.exports = {
       envType: body.envType,
       gitRepository: projectValue.gitRepository,
       gitProjectName: projectValue.gitProjectName,
+      buildHtml: projectValue.buildHtml,
+      buildFolder: projectValue.buildFolder
     }
   },
-  create: async ctx => {
+  getList: async ctx => {
+    console.log('getList')
     const { request: { body }, response } = ctx
     const schema = {
-      projectId: { type: 'number' },
-      gitRepository: { max: 255, min: 5, type: 'string' },
-      result: { type: 'string' },
-      logs: { type: 'string' },
-      operator: { type: 'string'}
+      id: { type: 'number', optional: true },
+      branchName: { type: 'string', optional: true },
+      envType: { type: 'string', optional: true }
     }
     const errors = v.validate(body, schema)
     if (Array.isArray(errors) && errors.length) {
@@ -58,28 +57,7 @@ module.exports = {
         success: false
       }
     }
-    const projectList = await projectServices.find({
-      id: body.projectId
-    })
-    if (!projectList.length) {
-      ctx.response.status = 500
-      return response.body = {
-        errorMsg: '未查找到项目',
-        result: '未查找到项目',
-        success: false
-      }
-    }
-    const publishEntity = await services.create(body)
-    response.body = {
-      message: '新增成功',
-      result: '新增成功',
-      success: true
-    }
-  },
-  getList: async ctx => {
-    console.log('getList')
-    const { request: { body }, response } = ctx
-    const entityList = await services.findAll()
+    const entityList = await services.findAll(body)
     response.body = {
       message: '查找成功',
       result: entityList,

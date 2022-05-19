@@ -34,11 +34,11 @@
         }
       },
       mounted() {
-        // this.socket = io()
-        // this.socket.on('deploy-log', (msg) => {
-        //   console.log(222, msg)
-        //   this.msgList.push(msg)
-        // })
+        this.socket = io()
+        this.socket.on('deploy-log', (msg) => {
+          console.log(222, msg)
+          this.msgList.push(msg)
+        })
       },
       methods: {
         handleTest() {
@@ -88,7 +88,7 @@
           this.deployLog = '部署中。。。'
           this.msgList = []
           axios.post('/v1/api/deploy', {
-            projectId: 2,
+            projectId: 4,
             branchName: 'test',
             envType: 'test',
             operator: 'yushibo'

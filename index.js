@@ -57,6 +57,8 @@ router.post("/v1/api/deploy", async ctx => {
             data.envType,
             data.gitRepository,
             data.gitProjectName,
+            data.buildHtml,
+            data.buildFolder
           ],
           function (text) {
             resolve(text);

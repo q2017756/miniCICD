@@ -24,9 +24,18 @@ TARGET_GIT_NAME=${target_name_git%.*}
 echo "TARGET_GIT_NAME: $TARGET_GIT_NAME"
 echo "参数7. 目标git文件夹名称 = $7"
 TARGET_PROJECT_NAME=$7
+echo "参数8. 打包产物html名称 = $8"
+BUILD_HTML_NAME=$8
+echo "参数7. 打包产物文件夹名称 = $9"
+BUILD_FOLDER_NAME=$9
 
 # 1. 根据项目所需node版本进行node版本切换 v16.13.0/v11.11.0
-
+# todo mac和linux不同
+echo "【### 切换所需node版本】"
+sudo npm i -g n --registry=https://registry.npm.taobao.org
+sudo n $1
+echo "【#### 当前node版本】"
+node -v
 # 2. 创建各个文件夹:dev、test、pre、prod
 CURRENT_DIR=$(pwd)
 echo "【### 判断文件夹是否存在，不存在则创建】"
@@ -53,10 +62,12 @@ cd $GIT_DIR_NAME
 git checkout $DEV_BRANCH_NAME
 echo "【#### 拉取最新的代码】"
 git pull origin $DEV_BRANCH_NAME
-echo "【### 安装依赖，打包dist】"
+# todo 包管理工具升级pnpm
+echo "【### 安装依赖】"
 cd $GIT_DIR_NAME/packages/$DEV_PROJECT_NAME
-pnpm i -s
-pnpm run build:$ENV_NAME
+cnpm i -s
+echo "【### 打包dist：npm run build:${ENV_NAME}】"
+npm run build:$ENV_NAME
 
 # 3. 进入目标环境文件夹下载开发源码并替换文件
 echo "【### 目标环境文件夹】"
@@ -71,12 +82,22 @@ cd $GIT_TEST_DIR_NAME
 git checkout $ENV_NAME
 echo "【#### 拉取最新的代码】"
 git pull origin $ENV_NAME
-echo "【#### 创建新的文件夹，备份旧的文件夹】"
-mv $GIT_TEST_DIR_NAME/$TARGET_PROJECT_NAME $GIT_TEST_DIR_NAME/$TARGET_PROJECT_NAME-bak
-mkdir $GIT_TEST_DIR_NAME/$TARGET_PROJECT_NAME
-echo "【#### 将开发分支打包后的dist复制到新创建的文件夹】"
+# 删除指定文件并替换
+cd $GIT_TEST_DIR_NAME/$TARGET_PROJECT_NAME
+echo "【#### 删除老文件】"
+rm $GIT_TEST_DIR_NAME/$TARGET_PROJECT_NAME/$BUILD_HTML_NAME
+dir_array=(${BUILD_FOLDER_NAME//、/ })  
+for FOLDER_NAME in ${dir_array[@]}
+do
+  if [ -d "$FOLDER_NAME" ]; then
+    echo "删除:$FOLDER_NAME"
+    rm -rf $GIT_TEST_DIR_NAME/$TARGET_PROJECT_NAME/$FOLDER_NAME
+  fi
+done 
+echo "【#### 替换文件】"
 cp -a $GIT_DIR_NAME/packages/$DEV_PROJECT_NAME/dist/. $GIT_TEST_DIR_NAME/$TARGET_PROJECT_NAME
-rm -rf $GIT_TEST_DIR_NAME/$TARGET_PROJECT_NAME-bak
+echo "【#### 替换后文件列表】"
+ls -lh
 echo "【#### 判断打包后是否有改动】"
 STAGE_FILES=$(git diff --name-only)
 if test ${#STAGE_FILES} -gt 0
@@ -85,15 +106,16 @@ then
   do
     echo "改动文件名称：$FILE"
   done
+  git branch
   git add .
   git commit -m "fix:($DEV_PROJECT_NAME)($ENV_NAME) 项目自动打包"
-  git push origin test
+  git push origin $ENV_NAME
   echo '【代码推送成功，结束】'
 else
   echo '【没有文件改动，结束】'
 fi
 # pnpm i -g anywhere
-
+# todo 启动静态文件服务器并定时时间关闭
 # exit 0
 # echo "【4. 启动http服务验证】"
 # function rand(){ 

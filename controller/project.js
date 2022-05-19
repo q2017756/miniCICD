@@ -15,9 +15,9 @@ module.exports = {
       name: { max: 60, min: 1, type: 'string' },
       nodeEnv: { max: 10, min: 1, type: 'string' },
       gitRepository: { max: 255, min: 5, type: 'string' },
-      gitProjectName: { max: 255, min: 5, type: 'string' },
-      desc: { max: 255, min: 5, type: 'string' },
-      people: { max: 255, min: 5, type: 'string' }
+      gitProjectName: { max: 255, min: 1, type: 'string' },
+      desc: { max: 255, min: 1, type: 'string' },
+      people: { max: 255, min: 1, type: 'string' }
     }
     const errors = v.validate(body, schema)
     if (Array.isArray(errors) && errors.length) {
@@ -125,9 +125,9 @@ module.exports = {
       name: { max: 60, min: 1, type: 'string' },
       nodeEnv: { max: 10, min: 1, type: 'string' },
       gitRepository: { max: 255, min: 5, type: 'string' },
-      gitProjectName: { max: 255, min: 5, type: 'string' },
-      desc: { max: 255, min: 5, type: 'string' },
-      people: { max: 255, min: 5, type: 'string' }
+      gitProjectName: { max: 255, min: 1, type: 'string' },
+      desc: { max: 255, min: 1, type: 'string' },
+      people: { max: 255, min: 1, type: 'string' }
     }
     const errors = v.validate(body, schema)
     if (Array.isArray(errors) && errors.length) {
