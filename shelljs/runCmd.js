@@ -42,7 +42,7 @@ function runCmd(cmd, args, callback, socketIo) {
     console.log('Oh noez, teh errurz: ' + typeof code);
     callback({
       logs: resp,
-      error: code === 1
+      error: code !== 0
     });
   });
 }
