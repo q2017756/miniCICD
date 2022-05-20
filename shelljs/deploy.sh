@@ -65,7 +65,7 @@ git pull origin $DEV_BRANCH_NAME
 # todo 包管理工具升级pnpm
 echo "【### 安装依赖】"
 cd $GIT_DIR_NAME/packages/$DEV_PROJECT_NAME
-cnpm i -s
+sudo cnpm i -s
 echo "【### 打包dist：npm run build:${ENV_NAME}】"
 npm run build:$ENV_NAME
 
