@@ -96,6 +96,44 @@ router.post("/v1/api/deploy", async ctx => {
     }
   }
 })
+router.post("/v1/api/testGitSSH", async ctx => {
+  
+  try {
+    ctx.request.socket.setTimeout(5 * 1000); 
+    const { request: { body }, response } = ctx
+    let execFunc = () => {
+      return new Promise((resolve, reject) => {
+        try {
+          runCmd(
+            "sh",
+            [
+              "./shelljs/gitSSH.sh", 
+            ],
+            function (text) {
+              resolve(text);
+            },
+            socketIo
+          );
+        } catch (e) {
+          logger.error(e);
+          reject(e);
+        }
+      });
+    };
+    let res = await execFunc();
+    response.body = {
+      message: res.error ? '连接失败' : '连接成功',
+      result: res.logs,
+      success: res.error ? false : true
+    }
+  } catch (e) {
+    response.body = {
+      errorMsg: e.message,
+      result: res,
+      success: false
+    }
+  }
+})
 applyRoutes(router)
 
 app.use(new KoaStatic(path.resolve(__dirname, "./")));

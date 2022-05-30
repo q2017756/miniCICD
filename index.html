@@ -47,24 +47,24 @@
           // this.handleDeploy()
         },
         test() {
-          axios.post('https://mapi.bestpay.com.cn/gapi/o2o/qdlPay/app/createContractNo', {
-            agreeId: '20220117030100222506456392400991',
-            "company":"mb","requestChannel":"MERCHANT_PC","requestSystem":"H5","requestUser":"H5","traceLogId":"iofiodasiogfasidogisogdisadogd"
-            // id: 2,
-            // name: 'proj2',
-            // gitRepository: 'https://github.com/repo1',
-            // desc: '44444',
-            // people: 'yu,wang',
-            // status: 'UNUSE'
-          })
-            .then((res) => {
-              // 部署完成，返回 log
-              this.resList.push(res.data.result)
-              console.log(this.resList)
-            })
-            .catch(function (err) {
-              console.log(err);
-            })
+          // axios.post('https://mapi.bestpay.com.cn/gapi/o2o/qdlPay/app/createContractNo', {
+          //   agreeId: '20220117030100222506456392400991',
+          //   "company":"mb","requestChannel":"MERCHANT_PC","requestSystem":"H5","requestUser":"H5","traceLogId":"iofiodasiogfasidogisogdisadogd"
+          //   // id: 2,
+          //   // name: 'proj2',
+          //   // gitRepository: 'https://github.com/repo1',
+          //   // desc: '44444',
+          //   // people: 'yu,wang',
+          //   // status: 'UNUSE'
+          // })
+          //   .then((res) => {
+          //     // 部署完成，返回 log
+          //     this.resList.push(res.data.result)
+          //     console.log(this.resList)
+          //   })
+          //   .catch(function (err) {
+          //     console.log(err);
+          //   })
         },
         userMethod() {
           axios.post('/v1/api/getUserInfo', {
@@ -87,11 +87,11 @@
         handleDeploy() {
           this.deployLog = '部署中。。。'
           this.msgList = []
-          axios.post('/v1/api/deploy', {
-            projectId: 3,
-            branchName: 'test',
-            envType: 'prod',
-            operator: 'yushibo'
+          axios.post('/v1/api/testGitSSH', {
+            // projectId: 3,
+            // branchName: 'test',
+            // envType: 'prod',
+            // operator: 'yushibo'
             // id: 2,
             // name: 'proj2',
             // gitRepository: 'https://github.com/repo1',
