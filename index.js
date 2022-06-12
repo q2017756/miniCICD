@@ -91,7 +91,7 @@ router.post("/v1/api/deploy", async ctx => {
     })
     response.body = {
       errorMsg: e.message,
-      result: res,
+      result: 'FAIL',
       success: false
     }
   }

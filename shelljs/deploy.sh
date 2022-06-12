@@ -79,6 +79,7 @@ if [ ! -d "$GIT_TEST_DIR_NAME" ]; then
 fi
 echo "【#### 切换到具体环境分支】"
 cd $GIT_TEST_DIR_NAME
+git reset HEAD --hard
 git checkout $ENV_NAME
 echo "【#### 拉取最新的代码】"
 git pull origin $ENV_NAME

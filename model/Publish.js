@@ -22,8 +22,7 @@ const Publish = sequelize.define('publish', {
   },
   // 日志内容
   logs: {
-    type: DataTypes.TEXT,
-    defaultValue: 'NO LOG'
+    type: DataTypes.TEXT('long')
   },
   // 备注
   remarks: {

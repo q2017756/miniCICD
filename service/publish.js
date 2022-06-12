@@ -13,6 +13,7 @@ module.exports = {
     payload.branchName && arr.push({ branchName: payload.branchName })
     payload.envType && arr.push({ envType: payload.envType })
     return db.Publish.findAll({
+      attributes: { exclude: ['logs'] },
       where: {
         [Op.and]: arr
       },
