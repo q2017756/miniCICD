@@ -26,8 +26,10 @@ echo "参数7. 目标git文件夹名称 = $7"
 TARGET_PROJECT_NAME=$7
 echo "参数8. 打包产物html名称 = $8"
 BUILD_HTML_NAME=$8
-echo "参数7. 打包产物文件夹名称 = $9"
+echo "参数9. 打包产物文件夹名称 = $9"
 BUILD_FOLDER_NAME=$9
+echo "参数10. 开发分支打包后产物路径（一般为dist） = ${10}"
+DEV_BUILD_SRC=${10}
 
 # 1. 根据项目所需node版本进行node版本切换 v16.13.0/v11.11.0
 # todo mac和linux不同
@@ -59,6 +61,7 @@ if [ ! -d "$GIT_DIR_NAME" ]; then
 fi
 echo "【#### 切换到test/test_tmp分支】"
 cd $GIT_DIR_NAME
+git reset HEAD --hard
 git checkout $DEV_BRANCH_NAME
 echo "【#### 拉取最新的代码】"
 git pull origin $DEV_BRANCH_NAME
@@ -86,17 +89,22 @@ git pull origin $ENV_NAME
 # 删除指定文件并替换
 cd $GIT_TEST_DIR_NAME/$TARGET_PROJECT_NAME
 echo "【#### 删除老文件】"
-rm $GIT_TEST_DIR_NAME/$TARGET_PROJECT_NAME/$BUILD_HTML_NAME
+FOLDER_NAME_PWD=$GIT_TEST_DIR_NAME/$TARGET_PROJECT_NAME/$BUILD_HTML_NAME
+if [ -d "$FOLDER_NAME_PWD" ]; then
+  echo "删除html:$FOLDER_NAME_PWD"
+  rm -rf $FOLDER_NAME_PWD
+fi
+
 dir_array=(${BUILD_FOLDER_NAME//、/ })  
 for FOLDER_NAME in ${dir_array[@]}
 do
   if [ -d "$FOLDER_NAME" ]; then
-    echo "删除:$FOLDER_NAME"
+    echo "删除文件夹:$FOLDER_NAME"
     rm -rf $GIT_TEST_DIR_NAME/$TARGET_PROJECT_NAME/$FOLDER_NAME
   fi
 done 
-echo "【#### 替换文件】"
-cp -a $GIT_DIR_NAME/packages/$DEV_PROJECT_NAME/dist/. $GIT_TEST_DIR_NAME/$TARGET_PROJECT_NAME
+echo "【#### 替换文件，将$GIT_DIR_NAME/packages/$DEV_PROJECT_NAME/$DEV_BUILD_SRC/. 复制到 $GIT_TEST_DIR_NAME/$TARGET_PROJECT_NAME】"
+cp -a $GIT_DIR_NAME/packages/$DEV_PROJECT_NAME/$DEV_BUILD_SRC/. $GIT_TEST_DIR_NAME/$TARGET_PROJECT_NAME
 echo "【#### 替换后文件列表】"
 ls -lh
 echo "【#### 判断打包后是否有改动】"

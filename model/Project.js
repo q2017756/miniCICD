@@ -22,6 +22,11 @@ const Project = sequelize.define('project', {
   gitProjectName: {
     type: DataTypes.STRING,
   },
+  // build后的文件夹路径，一般为dist
+  buildSrc: {
+    type: DataTypes.STRING,
+    defaultValue: 'dist'
+  },
   // 打包产物html名称
   buildHtml: {
     type: DataTypes.STRING,

@@ -37,7 +37,8 @@ module.exports = {
       gitRepository: projectValue.gitRepository,
       gitProjectName: projectValue.gitProjectName,
       buildHtml: projectValue.buildHtml,
-      buildFolder: projectValue.buildFolder
+      buildFolder: projectValue.buildFolder,
+      buildSrc: projectValue.buildSrc
     }
   },
   getList: async ctx => {
