@@ -2,6 +2,7 @@ const services = require('../service/publish.js')
 const projectServices = require('../service/project.js')
 const Validator = require('fastest-validator')
 const Boom = require('@hapi/boom');
+const shelljs = require('shelljs')
 const v = new Validator()
 
 module.exports = {
@@ -59,9 +60,30 @@ module.exports = {
       }
     }
     const entityList = await services.findAll(body)
+    let projectEntity = ''
+    let gitMessage = ''
+    if (body.projectId) {
+      projectEntity = await projectServices.find({
+        id: body.projectId
+      })
+      const shellMsg = shelljs.exec(`
+        cd ./sourceCode/dev/o2o-fund-service-h5 && 
+        pwd && 
+        git checkout ${body.branchName} && 
+        git log --pretty=format:"时间:%ci; 提交人:%cn; 提交信息:%s" HEAD -1
+      `)
+      if (shellMsg.code === 0) {
+        const shellMsgArr = shellMsg.stdout.split('\n')
+        gitMessage = shellMsgArr[shellMsgArr.length - 1]
+      }
+    }
     response.body = {
       message: '查找成功',
-      result: entityList,
+      result: {
+        projectInfo: projectEntity,
+        gitMessage: gitMessage,
+        list: entityList
+      },
       success: true
     }
   },
