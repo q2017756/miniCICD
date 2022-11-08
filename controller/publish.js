@@ -70,6 +70,7 @@ module.exports = {
         cd ./sourceCode/dev/o2o-fund-service-h5 && 
         pwd && 
         git checkout ${body.branchName} && 
+        git pull origin ${body.branchName} && 
         git log --pretty=format:"时间:%ci; 提交人:%cn; 提交信息:%s" HEAD -1
       `)
       if (shellMsg.code === 0) {
